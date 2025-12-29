@@ -479,6 +479,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Widget _buildImageGallery(Product product) {
+    // 🔍 DEBUG: Log image URL untuk troubleshooting
+    debugPrint('🖼️ Product: ${product.name}');
+    debugPrint('🖼️ Image URL: ${product.mainImageUrl}');
+    debugPrint('🖼️ URL is empty: ${product.mainImageUrl?.isEmpty ?? true}');
+    debugPrint('🖼️ URL is null: ${product.mainImageUrl == null}');
+    
     return Column(
       children: [
         // Main Image dengan Optimized Loading
@@ -498,12 +504,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     placeholder: (context, url) => Shimmer.fromColors(
                       baseColor: AppColors.grey200,
                       highlightColor: AppColors.grey100,
-                      child: Container(
-                        color: AppColors.grey100,
-                      ),
+                      child: Container(color: AppColors.grey100),
                     ),
                     // ❌ ERROR HANDLER dengan informasi
                     errorWidget: (context, url, error) {
+                      debugPrint('❌ Image load error: $error');
+                      debugPrint('❌ Tried URL: $url');
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -517,6 +523,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             Text(
                               'Gambar tidak tersedia',
                               style: AppTextStyles.bodySmall,
+                            ),
+                            const SizedBox(height: 8),
+                            // 🔧 DEBUG: Show URL for troubleshooting
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                'URL: ${url.toString().length > 50 ? '${url.toString().substring(0, 50)}...' : url}',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  fontSize: 10,
+                                  color: AppColors.grey400,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ],
                         ),
@@ -539,6 +558,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Text(
                           'Belum ada gambar',
                           style: AppTextStyles.bodySmall,
+                        ),
+                        const SizedBox(height: 8),
+                        // 🔧 DEBUG: Info
+                        Text(
+                          'mainImageUrl = null or empty',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            fontSize: 10,
+                            color: AppColors.grey400,
+                          ),
                         ),
                       ],
                     ),

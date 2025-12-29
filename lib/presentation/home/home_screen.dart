@@ -235,9 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           placeholder: (context, url) => Shimmer.fromColors(
                             baseColor: AppColors.grey200,
                             highlightColor: AppColors.grey100,
-                            child: Container(
-                              color: AppColors.grey100,
-                            ),
+                            child: Container(color: AppColors.grey100),
                           ),
                           // ❌ ERROR PLACEHOLDER
                           errorWidget: (context, url, error) => Center(

@@ -93,9 +93,7 @@ class CartScreen extends StatelessWidget {
                   placeholder: (context, url) => Shimmer.fromColors(
                     baseColor: AppColors.grey200,
                     highlightColor: AppColors.grey100,
-                    child: Container(
-                      color: AppColors.bgSecondary,
-                    ),
+                    child: Container(color: AppColors.bgSecondary),
                   ),
                   // ❌ ERROR HANDLER
                   errorWidget: (context, url, error) => const Icon(
