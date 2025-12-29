@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/text_styles.dart';
 import '../../core/utils/extensions.dart';
@@ -222,22 +224,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 140,
                   width: double.infinity,
                   color: AppColors.grey100,
+                  // 🖼️ OPTIMIZED IMAGE LOADING dengan caching & shimmer effect
                   child:
                       (product.mainImageUrl != null &&
                           product.mainImageUrl!.isNotEmpty)
-                      ? Image.network(
-                          product.mainImageUrl!,
+                      ? CachedNetworkImage(
+                          imageUrl: product.mainImageUrl!,
                           fit: BoxFit.cover,
-                          cacheHeight: 140,
-                          cacheWidth: 200,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Center(
-                              child: Icon(
-                                Icons.image_not_supported_outlined,
-                                color: AppColors.grey400,
-                              ),
-                            );
-                          },
+                          // ⏳ SHIMMER LOADING PLACEHOLDER
+                          placeholder: (context, url) => Shimmer.fromColors(
+                            baseColor: AppColors.grey200,
+                            highlightColor: AppColors.grey100,
+                            child: Container(
+                              color: AppColors.grey100,
+                            ),
+                          ),
+                          // ❌ ERROR PLACEHOLDER
+                          errorWidget: (context, url, error) => Center(
+                            child: Icon(
+                              Icons.image_not_supported_outlined,
+                              color: AppColors.grey400,
+                            ),
+                          ),
+                          // ⚡ OPTIMASI: Caching di device + compression
+                          memCacheHeight: 140,
+                          memCacheWidth: 200,
                         )
                       : Center(
                           child: Icon(

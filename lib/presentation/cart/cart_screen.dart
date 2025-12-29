@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../core/widgets/widgets.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/theme/app_colors.dart';
@@ -73,7 +75,7 @@ class CartScreen extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
+            // Product Image dengan Optimized Loading
             Container(
               width: 80,
               height: 80,
@@ -83,13 +85,26 @@ class CartScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  item.productImage,
+                // 🖼️ OPTIMIZED IMAGE LOADING dengan caching
+                child: CachedNetworkImage(
+                  imageUrl: item.productImage,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  // ⏳ SHIMMER PLACEHOLDER
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: AppColors.grey200,
+                    highlightColor: AppColors.grey100,
+                    child: Container(
+                      color: AppColors.bgSecondary,
+                    ),
+                  ),
+                  // ❌ ERROR HANDLER
+                  errorWidget: (context, url, error) => const Icon(
                     Icons.image_not_supported_outlined,
                     color: AppColors.textSecondary,
                   ),
+                  // ⚡ OPTIMASI: Memory cache
+                  memCacheHeight: 80,
+                  memCacheWidth: 80,
                 ),
               ),
             ),

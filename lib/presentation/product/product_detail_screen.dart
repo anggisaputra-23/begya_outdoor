@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/text_styles.dart';
 import '../../core/utils/extensions.dart';
@@ -479,19 +481,29 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget _buildImageGallery(Product product) {
     return Column(
       children: [
-        // Main Image
+        // Main Image dengan Optimized Loading
         Hero(
           tag: 'product_${widget.productId}',
           child: Container(
             height: 300,
             width: double.infinity,
             color: AppColors.grey100,
+            // 🖼️ OPTIMIZED IMAGE LOADING dengan caching & shimmer
             child:
                 product.mainImageUrl != null && product.mainImageUrl!.isNotEmpty
-                ? Image.network(
-                    product.mainImageUrl!,
+                ? CachedNetworkImage(
+                    imageUrl: product.mainImageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
+                    // ⏳ SHIMMER LOADING PLACEHOLDER
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: AppColors.grey200,
+                      highlightColor: AppColors.grey100,
+                      child: Container(
+                        color: AppColors.grey100,
+                      ),
+                    ),
+                    // ❌ ERROR HANDLER dengan informasi
+                    errorWidget: (context, url, error) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -510,6 +522,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                       );
                     },
+                    // ⚡ OPTIMASI: Caching dengan memory cache
+                    memCacheHeight: 300,
+                    memCacheWidth: 400,
                   )
                 : Center(
                     child: Column(
